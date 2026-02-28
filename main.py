@@ -1,5 +1,6 @@
 # risolvere trivia game
 import random
+from operator import itemgetter
 FILE_DOMANDE="domande.txt"
 FILE_PUNTEGGIO="punti.txt"
 
@@ -55,6 +56,17 @@ def leggi_punteggio(nomefile):
             diz[lista[0]]=giocatore.punteggio
         return diz
 
+def leggi_punteggio_2(nomefile):
+    lista_punteggi=[]
+    with open(nomefile, "r", encoding="utf-8") as file:
+        for line in file:
+            line=line.rstrip("\n")
+            lista=line.split(" ")
+            lista_punteggi.append(lista)
+        for i in range(0, len(lista_punteggi)):
+            lista_punteggi[i][1]=int(lista_punteggi[i][1])
+        return lista_punteggi
+
 def aggiorna_punteggio(dizionario, nome, punteggio):
     if dizionario.get(nome) != None:
         dizionario[nome] = dizionario[nome] + punteggio
@@ -66,11 +78,18 @@ def aggiorna_file(nomefile, dizionario):
         for nome in dizionario:
             file.write(f"{nome} {dizionario[nome]}\n")
 
+def aggiorna_file_1(nomefile, lista):
+    with open(nomefile, "w", encoding="utf-8") as file:
+        for i in range(0, len(lista)):
+            file.write(f"{lista[i][0]} {lista[i][1]}\n")
+
+
 def Main():
     c=True
     liv = 0
     punteggio = 0
     dizionario = leggi_punteggio(FILE_PUNTEGGIO)
+    lista_punteggi=leggi_punteggio_2(FILE_PUNTEGGIO)
     domande = leggi_domande(FILE_DOMANDE)
     while  c==True :
         lista = []
@@ -81,6 +100,7 @@ def Main():
             print("Raggiunto il livello massimo")
             nome = input("Inserisci il nome: ")
             aggiorna_punteggio(dizionario, nome, punteggio)
+            lista_punteggi.append([nome, punteggio])
             break
         random.shuffle(lista)
         domanda=lista[random.randint(0, (len(lista)-1))]
@@ -97,12 +117,15 @@ def Main():
             c=True
         else:
             c=False
-            print(f"Risposta errata! La risposta corretta era:d {domanda.corretta}")
+            print(f"Risposta errata! La risposta corretta era: {domanda.corretta}")
             print("")
             nome = input("Inserisci il nome: ")
             aggiorna_punteggio(dizionario, nome, punteggio)
+            lista_punteggi.append([nome, punteggio])
+
     dizionario_ordinato=dict(sorted(dizionario.items(), key=lambda item: item[1], reverse=True))
-    print(dizionario_ordinato)
+    lista_punteggi.sort(key=itemgetter(1), reverse=True)
     aggiorna_file(FILE_PUNTEGGIO, dizionario_ordinato)
-    print("hello word")
+    # aggiorna_file_1(FILE_PUNTEGGIO, lista_punteggi)
+
 Main()
