@@ -104,5 +104,5 @@ def Main():
     dizionario_ordinato=dict(sorted(dizionario.items(), key=lambda item: item[1], reverse=True))
     print(dizionario_ordinato)
     aggiorna_file(FILE_PUNTEGGIO, dizionario_ordinato)
-
+    print("hello word")
 Main()
